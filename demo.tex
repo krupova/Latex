@@ -1,0 +1,382 @@
+% This is LLNCS.DEM the demonstration file of
+% the LaTeX macro package from Springer-Verlag
+% for Lecture Notes in Computer Science,
+% version 2.4 for LaTeX2e as of 16. April 2010
+%
+\documentclass{llncs}
+%
+\usepackage{graphics}
+%
+\begin{document}
+%
+
+\title{Effective QoS aware web service composition in dynamic environment}
+%
+\titlerunning{Effective QoS aware web service composition in dynamic environment}  % abbreviated title (for running head)
+%                                     also used for the TOC unless
+%                                     \toctitle is used
+%
+\author{{Peter Bartalos \and M\'{a}ria Bielikov\'{a}}}
+%
+\authorrunning{Peter Bartalos \and M\'{a}ria Bielikov\'{a}} % abbreviated author list (for running head)
+%
+%\institute{Institute of Informatics and Software Engineering,Faculty of Informatics and InformationTechnologies\at SlovakUniversityofTechnologyin Bratislava,Ilkovi\^{c}ova3,84216 Bratislava,Slovakia,\\
+%\email \{bartalos,bielik\}@fiit.stuba.sk,\\ 
+%\texttt{\homedir \{bartalos,bielik\}@fiit.stuba.skl}\\
+%}
+
+\maketitle           
+\vspace{90pt} 
+
+
+
+\textbf{Abstract} 
+Nowadays, several web services composition approaches, each considering 
+various aspects of the composition problem, are known. Consequently, a lot of 
+attention shifts to the performance issues of web service composition. This paper 
+presentsaneffectiveQoSaware composition approach.Ourwork focusestoitsperformance, 
+which is studied also in dynamically changing environment, where new 
+services aredeployed, some services are removed, or the QoS characteristics change 
+in time.We analyzetheimpactoftheneedto manage these changestothe sojourn 
+of the composition query in the system. The experiments show that the proposed 
+composition system is handling these changes effectively and the sojourn time is 
+not significantly affected. 
+
+
+\section{Introduction }
+
+
+Web service composition~\cite{8} is a process of arranging several web services into 
+workflows. The aim is to bring a utility, which cannot be provided by a single service. 
+Its automation showed to be a challenging task. The research of service composition 
+in last years tends to focus on issues related to QoS~\cite{3, 5, 6, 9, 13, 15}, pre/
+post-conditions \cite{4, 6, 12}, user constraints and preferences (e.g. soft constraints)~\cite{2, 10, 14}, consideration of complex dependencies between services~\cite{7, 16}. 
+
+	Several approaches deal with performance and scalability issues of the composition 
+process \cite{3, 5, 6, 9, 12}. These use effective data structures created during 
+preprocessing to speed up the composition. As it is true for the web in general, also 
+web services change in time. Newservices are deployed, some of them are removed. 
+Moreover,the non-functional properties of services may change frequently. The aim 
+
+\rule{\textwidth}{2pt}
+\small Peter Bartalos and M\'{a}ria Bielikov\'{a} 
+Institute of Informatics and Software Engineering,Faculty of Informatics and InformationTechnologies,
+SlovakUniversityofTechnologyin Bratislava,Ilkovi\^{c}ova3,84216 Bratislava,Slovakia 
+e-mail:
+\begin{verbatim}
+ {bartalos,bielik}@fiit.stuba.sk 
+\end{verbatim}
+%docasne riesenie pre nefunkcnost sablony
+%koniec prvej strany
+
+\clearpage
+
+
+
+\rm
+is to find a composite service with the best global QoS characteristic, computed 
+from the QoS attributes of single services based on aggregation rules \cite{3, 13, 15}. 
+The composition system must flexibly react to these changes. The solution should 
+reflect the current situation in the service environment. If the changes are not managed, 
+it may happen that the designed composition does not use the right services, 
+it includes services which are already not executable, or it is not optimal from QoS 
+point of view. Hence, we do not achieve the satisfaction of the user goal based on 
+which the composition is realized. On the other side, the dynamic changes of services 
+requireupdatingthedatastructuresofthecomposition system, beforewe start 
+new composition. Thus, the dynamicchangesaffect the compositiontime.Toavoid 
+too much delay, the updates must be realizedquickly. In this paper we deal with the 
+performance and scalability of service composition operating in dynamic environment.
+We present our designed algorithms, whichwere already usedin ourprevious 
+work and extended to more effectively manage the dynamic changes. 
+
+ \section{Related work }
+
+
+Several approaches automating the web service composition had already been proposed.
+Theyshowedtobe usefulwhen lookingforacompositionawareof pre-/po\-stconditions, 
+QoS and satisfying the user constraints, preferences. Promising results 
+were achieved also regarding the performance. There are approaches able to compose 
+services in acceptable time, even if the number of services in the registry rises 
+to someten thousands.However,only little attentionhadbeengiventothe research 
+of approaches handling thedynamic changesin the service environment. 
+
+As we studied approaches in~\cite{5, 9, 12}, we found out that there are some issues 
+appearing in each of them. First, they use pre-processing during which effective 
+data structures are created. These represent the services and the interconnections 
+between them. Another similarity is in the base of the composition process. It is 
+a forward search, starting with the concepts describing the inputs provided in the 
+query (at semantic level).The set of these provided concepts is then incrementally 
+extended. In each iteration, concepts associated with outputs of services having provided 
+inputs are appended. An input is provided if it is associated with a concept, 
+already includedin the set of provided concepts. This continues in iterations until 
+all concepts required in the user query are not provided and new concept can be 
+appended. During the iterations, also an acyclic graph of services, depicting all possible 
+solutions of the composition problem, isbuilt. After all required concepts are 
+produced, to remove redundant services, a backward search is performed, starting 
+with services directly producing the outputs required in the user query. 
+
+In \cite{12} the authors presentaProlog based, pre-/post-conditionaware composition 
+approach. It does not consider the QoS of services. The aim of pre-processing in 
+this approach is to convert the service descriptions into Prolog terms. The semantic 
+relations (e.g. subsumption) are also pre-processed. Thebuilt-in indexing scheme 
+facilitatesfast composition. The authors deal also with \textit{incremental updates} required 
+%koniec druhej strany
+
+
+when adding a new service. They results show that managing an update requires 
+much more time, than thecomposition (e.g.1 vs.18 msec). 
+
+Aneffective, QoSaware composition approachis presentedin~\cite{9}.Itis basedon 
+modified dynamic programming, and a data structure having three parts. The first 
+represents services, the second concepts, the third the mapping of the concepts to 
+service parameters.The compositioniseffectivedueafiltering utilizedto reducethe 
+search space.Thepruning removes servicesi) whichhavenoinputs (thuscannotbe 
+executed), and ii) are not optimal from QoS point of view. During forward chaining, 
+when adding new concepts into the set of provided concepts, the aggregated QoS 
+values of services are updated to find the optimal value. Also the provided concepts 
+arerelatedtoan optimalQoSvalue, calculated basedonthe optimal aggregatedQoS 
+value of services which are producing it. 
+
+In~\cite{5} we had presented a composition approach dealing with performance and 
+scalability issues. The difference between our approach and~\cite{9} seems to be minor 
+from the algorithm point of view. Due poor description of the algorithm in~\cite{9}, we 
+are not able to exactly state the difference. However, it is clear that in~\cite{9} different 
+data structures are used to express the services, and their relation to other services 
+and concepts. Moreover, our work deals also with pre-/post-conditions, just as~\cite{12}. 
+These aspects of our composition system are described in~\cite{4,6}. 
+
+\section{Service composition process }
+
+
+Theaimofour composition approach presentedin~\cite{4} was to \textit{select usable} services. 
+The service is usable if all its inputs are provided thus can be executed. The inputs 
+are provided in the user query, or as an output of another usable service.To 
+select usable services, forward chaining is realized. During it, we also select the 
+best provider for each input of all services, considering QoS. This process becomes 
+a high computation demanding task as the number of services, their inputs, and 
+number of input providers rises. The complexity of the computation is also strongly 
+dependent on the interconnections between the services. 
+
+To speed up the \textit{select usable}  services process, we propose search space restriction. 
+Its aim is the selection of \textit{ unusable services}.Aservice is unusable, if at least 
+oneitsinputisnotprovidedinthe user query, neitheras outputof ancestor services. 
+The process lies on identification of such services, for which there is at least one 
+input not provided by any available service, i.e. the only case when it is usable is 
+if the respective input is provided in the user query. These services are identified 
+during preprocessing.We call them \textit{user data dependent services}. 
+
+The selectionof (un)usable serviceis doneby markinga service.The marks are: 
+\textit{UNDEC} if it is undecided if the service is unusable, \textit{USAB} if the service is usable, 
+\textit{UNUSAB} if the service is unusable, \textit{UDD} if the service is user data dependent, 
+\textit{UDDPROV} if the service is \textit{UDD} and all dependent inputs are provided in the query. 
+
+Alotofourworkhadbeen redesigningtheeffectivedata structuresusedin~\cite{4,5}, 
+to be quickly modifiable when the service environment changes. In the following, 
+%koniec 3 strany
+
+
+wepresentanoverviewofthedata structurestobeableto understandthe algorithms 
+
+introduced later. The most important are: 
+
+ - \textit{AllServices}: a collection of all available services. 
+
+- \textit{ConceptProviders}: a collection, where an elementisakey-value pairofi) concept 
+and ii) list of services having an output associated with concept. 
+
+- \textit{ConceptConsumers}: a collection, where an element is a key-value pair of i) 
+ \textit{concept} and ii) list of services having an input associated with \textit{ concept}. 
+
+- \textit{InputDependents}: the same as\textit{ ConceptConsumers}, but contains only services 
+marked with \textit{ UDD}. 
+
+- \textit{UserDataDependents}:a collection of services marked with \textit{UDD}. 
+
+- \textit{SuperConcepts} :a collection, where an elementisakey-value pairofi)concept 
+and ii) list of concepts (transitively) subsumed by \textit{ concept}. 
+
+A service is represented as a complex data structure having several attributes. 
+Its aim is to store information about service’s properties and interconnections to 
+ancestor, and successor services. The main attributes are: 
+
+- \textit{usability} :stores the mark of the service as presented before. 
+
+- \textit{unprovidedInputs}:the number of unprovided user data dependent inputs. 
+
+- \textit{inputs}:list of concepts associated with the inputs. 
+
+-\textit{inputProviders}: for each input, it stores a list of services providing it. 
+
+-\textit{bestQoSProviders}:for eachinput,it storesa referencetoa service which provides 
+it and has the best QoS. 
+
+- \textit{successors}:list of successor services. 
+
+\subsection{Restricting the search space }
+
+The \textit{ select unusable }services process performs as presented in Alg. 1. It can be 
+started only after we select services having all inputs provided in the user query and 
+mark them as\textit{ USAB}.ThisisthepartofAlg.2atlines1to12.Then,theprocess starts 
+evaluating which services can be marked with\textit{ UDDPROV} (lines1to 6).For each 
+\textit{provided input} in the user query, we get the\textit{ list} of services from\textit{ InputDependents}, 
+requiring the respective \textit{provided input}. For each service in the \textit{list}, we decrement 
+the number of unprovided user data dependent inputs. If this number is zero, the 
+service is potentially usable.We cannot be surebecause it may have other inputs 
+which do not rely on provision in the user query. This is evaluated later. 
+
+Next,we decidewhich userdata dependent servicesarenot usable(lines7to9). 
+We traverse \textit{UserDataDependents} and if the respective service is not usable, either 
+has not provided all user data dependent inputs, it is marked with\textit{ UNUSAB}. Then, 
+we create a list of services still having undecided usability (lines 10 to 12). 
+
+Up to now, we know which user data dependent services are unusable. The 
+(un)usability of these services influences also their successors. If there is a service 
+having some input for which all providers were marked with\textit{ UNUSAB}, it is 
+unusable too. In the rest, we evaluate this (lines 13 to 25). 
+%koniec 4 strany
+
+\begin{verbatim}
+1: for all provided input do
+2: list = InputDependents.get(provided input);
+3: for all service in list do
+4: decrement service.unprovidedInputs;
+5: if service.unprovidedInputs == 0 then
+6: service.usability = UDDPROV;
+7: for all service in UserDataDependents do
+8: if service.usability 6= USAB AND service.usability 6= UDDPROV then
+9: service.usability = UNUSAB;
+10: for all service in AllServices do
+11: if service.usability == UNDEC then
+12: toProcess.add(service);
+13: while is service to process do
+14: for all service in toProcess which is undecided do
+15: for all input in service.inputs do
+16: isUnprovidedInput = true;
+17: if input provided in user query then
+18: isUnprovidedInput = false;
+19: else
+20: providers = service.inputProviders of input;
+21: for all provider in providers do
+22: if provider.usability 6= UNUSAB then
+23: isUnprovidedInput = false;
+24: if isUnprovidedInput == true then
+25: service.usability = UNUSAB;
+\end{verbatim}
+%tu ma byt tabulka alebo co
+
+While there is a potential service which may be marked unusable, we traverse 
+services from\textit{ toProcess}. For each input of the respective service, we check if it 
+is for sure unprovided, which a default assumption is. If it is provided in the user 
+query, then\textit{ isUnprovidedInput} isfalse.Ifitis not, we traverse all the input provider 
+services. If there is at least one which is not unusable, then\textit{ isUnprovidedInput} is 
+false. This case does not mean that the input is provided, we just cannot be sure 
+that it is not. If we are sure that the service has at least one unprovided input, i.e. 
+\textit{isUnprovidedInput} was not changedtofalse,itis unusable.Ifwe mark some service 
+as unusable,theevaluation startsagain.The reasonisthatthefoundunusable service 
+affects its successors, which may thus become unusable too. 
+
+After the \textit{select unusable} services process finishes, several services were marked 
+as unusable. These cannot be used in the composition. Thus, we restricted the search 
+space and we will not waste time during the composition with several unusable 
+services. Note that we did not find all unusable services.We found each unusable 
+service which is user data dependent, or it is a (indirect) successor of it. 
+ %koniec 5 strany
+\clearpage
+
+\subsection{Discovering usable services }
+
+The\textit{ select usable} services process has two phases, see Alg. 2. First, we select services 
+having all inputs provided in the user query. Second, we realize forward chaining 
+to find other usable services. The first phase starts by collecting services which 
+have some inputsprovidedinthe user query (lines2,3). Then,foreach potential 
+service we check if it has provided all inputs (lines5 to 12). If so, the service is 
+marked as\textit{ USAB} and put in\textit{ toProcess. }
+
+The secondphase(lines13to30) performsinaloopforall servicesin\textit{ toProcess. }
+For a respective\textit{service}, we check if there is some provider of its inputs (lines 15 
+to 24). During this, we select the provider having the best QoS at the moment. If 
+the service has provided all inputs, it is marked with \textit{USAB }and we recalculate its 
+aggregated QoS based on the best QoS providers. Then, for all its successors, we 
+check if their usability is undecided or if the service can improve the aggregated 
+QoS of the respective\textit{ successor}. If so, the\textit{ successor} is processed too. 
+%%tu ma byt zase ta tabulka s kodom ci co
+
+%%koniec 6 strany
+\clearpage
+
+\section{Dynamic aspects of service composition }
+
+
+Our composition system can be seen as a queuing system with different type of requests 
+\cite{1}.Itworks as depictedin Fig.1.When the system starts,it initializes its 
+data structures based on currently available services. After, it is waiting for update 
+requests, or user queries (1). These are collected in queues and processed regarding 
+the\textit{ first in first out} rule. The updates are managed with higher,\textit{ non-preemptive }priority, 
+i.e. the composition is not interrupted if an update request arrives. If an update 
+request arrives (2), i.e. new service is available, some service become unavailable, 
+or the QoS characteristics of some service had changed, we update the affected data 
+structures. When all the changes are managed (3), the system is ready to process 
+new user query.Ifa new query has already been received, the systemprocesses it 
+immediately (4). Otherwise, it goes to waiting state (5). Here, it again waits for an 
+update request, or composition query (6). The compositionis followedby the reinitialization 
+(7). After, we manage update requests, if some had arrived (8). If not, we 
+process a new user query for composition (9), or go to waiting state (10). 
+
+\begin{figure}[h]
+
+\includegraphics{obr1.jpg}
+
+\caption{Composition system life cycle} %obrazok je fajn, len toto treba yarovnat nalavo
+\end{figure}
+
+The change of service QoS characteristics are managed in constant time, independently 
+on the size of the service repository. It requires only changing the values 
+of the QoS attributes in the object representing the corresponding service. The 
+updates required because some service is made (un)available are dividedinto two 
+cases. Adding a new service requires creating a new object representing it and discovering 
+its interconnections with other objects. When the service is removed permanently, 
+we have to remove the interconnections with other objects. The temporal 
+removing of the service is possible, too. This is useful if we expect that it will be 
+madeavailableagain.The temporal removingofthe serviceisdonein constanttime, 
+bysettingaflagdepictingthe(un)availabilityofthe service.Tomakesucha service 
+available again, we only have to set a flag once again. The adding of a new service, 
+and permanent removal of some service are more complicated. Theydepend on the 
+overall set of services available in the service repository, and their interconnection. 
+
+The adding of a new service starts with adding a service into AllServices, see 
+Alg. 3. Then, we discover the interconnections with ancestor services (lines 2 to 
+10). For each input, we determine the services providing it. If there is no input 
+provider, we add the service to \textit{UserDataDependents}, and\textit{ InputDependents}. Otherwise, 
+we add it to the list of successors of each provider. Finally, we add it to 
+services requiring the given input. 
+\clearpage
+%%%%%%%%%%Tuto ma byt ynova ta vec 
+
+
+Inthenext,we createa collectionof distinct concepts subsumedby some service 
+outputs (lines11to14).Foreach such  \textit{superConcept}, we add the service to a list of 
+its providers (line 16). Each service for which service produces input data is added to 
+its successors (lines 17 to 19). Finally,for each successor we add service to providers 
+of all inputs produced by it (line 23). During this, we check if the successor is in 
+ \textit{UserDataDependents}. If it is, and the service provides an input, whichwas the only 
+unprovided input, the successor is removed from  \textit{UserDataDependents}. 
+
+The permanent removal of the services is a revert operation to adding a new 
+service. It deletes the interconnections to other services, and the references of the 
+object representing it, from each data structure. Due a straightforwardness of the 
+process and a lack of space, we omit its detailed description. 
+
+\section{Evaluation }
+
+
+The evaluation of our approach is split into evaluation of i) times required to 
+add/remove services, compose services, and reinitialize the system, ii) behavior of 
+the system due continuing query arrival, without or with dynamic changes in the 
+
+
+
+%\bibliographystyle{plain}
+%\bibliography{zdroje}
+
+
+\end{document}
